@@ -1,0 +1,41 @@
+# Node.js & TypeScript
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.*.local
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs & Temp files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.DS_Store
+*.log
+.tmp
+.vscode/
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE & OS
+.idea/
+*.swp
+*.swo
+Thumbs.db
+
+# Frontend (Vite / React)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+frontend/.turbo/

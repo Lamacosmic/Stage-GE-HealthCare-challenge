@@ -1,0 +1,12 @@
+{
+  "name": "stage-ge-healthcare-challenge",
+  "version": "1.0.0",
+  "description": "Petit exercice en rapport avec la compression d’images et l’affichage des formats Jpeg 2000 et Jpeg2000 HT dans le navigateur",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
