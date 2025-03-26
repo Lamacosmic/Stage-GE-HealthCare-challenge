@@ -4,4 +4,5 @@ Petit exercice en rapport avec la compression d’images et l’affichage des fo
 # Source :
 
 ### Image :
-- https://rubomedical.com/dicom_files/index.html
+- [Circle of Willis](https://3dicomviewer.com/dicom-library/)
+- [manifest-1743030850389](https://nbia.cancerimagingarchive.net/nbia-search/?saved-cart=nbia-79801734441181908)

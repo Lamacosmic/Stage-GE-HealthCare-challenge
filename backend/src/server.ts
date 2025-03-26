@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 
 app.get('/convert', (req, res) => {
     const type: string = req.query.type as string;
-    let imageConverter: ImageConverter = new ImageConverter('../image_dcm/MRBRAIN.DCM', type);
+    let imageConverter: ImageConverter = new ImageConverter('../image_dcm/manifest-1743030850389/CMB-AML/MSB-05167/12-18-1959-NA-CTChest-92091/10.000000-AXIAL LG 3.0 X 3.0-84776/1-001.dcm', type);
     imageConverter.convert();
     res.send(`WIP`); //FIXME
 }, )
