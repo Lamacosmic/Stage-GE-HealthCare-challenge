@@ -1,13 +1,29 @@
 import fs from 'fs';
+import dicomParser, {DataSet, Element} from "dicom-parser";
 
 class ImageConverter {
 
-    private _buffer: Buffer;
+    private readonly _pixels;
     private readonly _type: string;
+    private readonly _width: number;
+    private readonly _height: number;
+    private readonly _bitsAllocated: number;
 
     public constructor(path: string, type: string) {
-        this._buffer = fs.readFileSync(path);
         this._type = type.toLowerCase();
+        const dataset: DataSet = dicomParser.parseDicom(fs.readFileSync(path)); // lecture et parsing de l'image
+
+        const pixelData: Element = dataset.elements.x7fe00010; //recuperation des valeurs des pixels sans les metadata
+        this._width = dataset.uint16("x00280011") || 0;
+        this._height = dataset.uint16("x00280010") || 0;
+        this._bitsAllocated = dataset.uint16("x00280100") || 0;
+
+        if (!pixelData || !this._width && !this._height && !this._bitsAllocated) {
+            throw new Error("Could not parse image data.");
+        }
+
+        this._pixels = new Uint16Array(dataset.byteArray.buffer, pixelData.dataOffset, pixelData.length / 2);
+        return;
     }
 
     public convert():void {
@@ -22,7 +38,7 @@ class ImageConverter {
     }
 
     private toJpeg():void {
-        throw new Error("Not implemented."); //TODO
+        return;
     }
 }
 
