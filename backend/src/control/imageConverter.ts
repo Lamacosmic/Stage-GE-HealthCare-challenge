@@ -1,5 +1,6 @@
 import fs from 'fs';
-import dicomParser, {DataSet, Element} from "dicom-parser";
+import dicomParser, {DataSet, Element} from 'dicom-parser';
+import sharp, {Sharp} from "sharp";
 
 class ImageConverter {
 
@@ -27,17 +28,31 @@ class ImageConverter {
     }
 
     public convert():void {
-        switch (this._type) {
-            case "jpeg":
-                this.toJpeg();
-                break;
-            default:
-                throw new Error("Unsupported type " + this._type);
-        }
-        return;
-    }
 
-    private toJpeg():void {
+        const pixelBuffer = Buffer.alloc(this._width * this._height * 3);
+
+        for (let i = 0; i < this._width * this._height; i++) {
+            const value = (this._pixels[i] / (1 << 12)) * 255; // 12 est pas 16 car l'image est sous 12 bit mais 16 sont alloue
+            pixelBuffer[i * 3] = value;
+            pixelBuffer[i * 3 + 1] = value;
+            pixelBuffer[i * 3 + 2] = value;
+        }
+
+        let img_out: Sharp = sharp(pixelBuffer, {raw: {width: this._width, height: this._height, channels: 3}})
+
+        switch (this._type) {
+            case 'jpeg':
+                img_out.toFormat('jpeg');
+                break;
+            // case 'jp2':
+            //     img_out.toFormat('jp2');
+            //     break;
+            // case 'jph':
+            //     img_out.toFormat('jph') //Soon besoin de OpenJPEG
+            default:
+                throw new Error(`Unsupported type "${this._type}"`);
+        }
+        img_out.toFile('dist/tmp.jpeg').then(() => console.log('Image converted'));
         return;
     }
 }
