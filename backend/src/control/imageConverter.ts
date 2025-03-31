@@ -14,9 +14,9 @@ class ImageConverter {
     private readonly _width: number;
     private readonly _height: number;
 
-    public constructor(path: string, type: string) {
+    public constructor(buffer: Buffer, type: string) {
         this._type = type.toLowerCase();
-        const dataset: DataSet = dicomParser.parseDicom(fs.readFileSync(path)); // lecture et parsing de l'image
+        const dataset: DataSet = dicomParser.parseDicom(buffer); // lecture et parsing de l'image
 
         const pixelData: Element = dataset.elements.x7fe00010; //recuperation des valeurs des pixels sans les metadata
         this._width = dataset.uint16("x00280011") || 0;
@@ -53,7 +53,6 @@ class ImageConverter {
                 this.toPPM(ppmFile, pixelBuffer);
                 const cmd = `ojph_compress -i ${ppmFile} -o dist/out.${this._type}`;
                 execSync(cmd);
-                fs.unlinkSync(ppmFile);
                 break;
             default:
                 throw new Error(`Unsupported type "${this._type}"`);
