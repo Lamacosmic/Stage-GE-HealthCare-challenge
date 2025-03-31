@@ -1,14 +1,18 @@
 import fs from 'fs';
 import dicomParser, {DataSet, Element} from 'dicom-parser';
-import sharp, {Sharp} from "sharp";
+import sharp from 'sharp';
+import {execSync} from "node:child_process";
+import {Buffer} from "node:buffer";
 
 class ImageConverter {
+    get type(): string {
+        return this._type;
+    }
 
     private readonly _pixels;
     private readonly _type: string;
     private readonly _width: number;
     private readonly _height: number;
-    private readonly _bitsAllocated: number;
 
     public constructor(path: string, type: string) {
         this._type = type.toLowerCase();
@@ -17,9 +21,8 @@ class ImageConverter {
         const pixelData: Element = dataset.elements.x7fe00010; //recuperation des valeurs des pixels sans les metadata
         this._width = dataset.uint16("x00280011") || 0;
         this._height = dataset.uint16("x00280010") || 0;
-        this._bitsAllocated = dataset.uint16("x00280100") || 0;
 
-        if (!pixelData || !this._width && !this._height && !this._bitsAllocated) {
+        if (!pixelData || !this._width && !this._height) {
             throw new Error("Could not parse image data.");
         }
 
@@ -27,7 +30,7 @@ class ImageConverter {
         return;
     }
 
-    public convert():void {
+    public async convert(): Promise<void> {
 
         const pixelBuffer = Buffer.alloc(this._width * this._height * 3);
 
@@ -38,22 +41,29 @@ class ImageConverter {
             pixelBuffer[i * 3 + 2] = value;
         }
 
-        let img_out: Sharp = sharp(pixelBuffer, {raw: {width: this._width, height: this._height, channels: 3}})
-
         switch (this._type) {
             case 'jpeg':
-                img_out.toFormat('jpeg');
+                await sharp(pixelBuffer, {raw: {width: this._width, height: this._height, channels: 3}})
+                    .toFormat('jpeg')
+                    .toFile('dist/out.jpeg');
                 break;
-            // case 'jp2':
-            //     img_out.toFormat('jp2');
-            //     break;
-            // case 'jph':
-            //     img_out.toFormat('jph') //Soon besoin de OpenJPEG
+            case 'jp2':
+            case 'jph':
+                const ppmFile = 'dist/tmp.ppm';
+                this.toPPM(ppmFile, pixelBuffer);
+                const cmd = `ojph_compress -i ${ppmFile} -o dist/out.${this._type}`;
+                execSync(cmd);
+                fs.unlinkSync(ppmFile);
+                break;
             default:
                 throw new Error(`Unsupported type "${this._type}"`);
         }
-        img_out.toFile('dist/tmp.jpeg').then(() => console.log('Image converted'));
         return;
+    }
+
+    private toPPM(ppmpath: string, buffer: Buffer): void {
+        const header = `P6\n${this._width} ${this._height}\n255\n`;
+        fs.writeFileSync(ppmpath, Buffer.concat([Buffer.from(header), buffer]));
     }
 }
 
