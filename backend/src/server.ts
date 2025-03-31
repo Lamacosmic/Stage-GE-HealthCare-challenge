@@ -27,7 +27,7 @@ app.post('/convert', upload.single('image'), (req, res) => {
     try{
         const imageConverter: ImageConverter = new ImageConverter(req.file.buffer, type);
         imageConverter.convert()
-            .then(() => res.sendFile(`out.${imageConverter.type}`, { root: path.join(__dirname, "../dist") }));
+            .then(() => res.sendFile(`out.${imageConverter.type}`, { root: path.join(__dirname, `../${imageConverter.outPath}`) }));
     } catch (e: any) {
         res.status(500).send(e.message);
     }

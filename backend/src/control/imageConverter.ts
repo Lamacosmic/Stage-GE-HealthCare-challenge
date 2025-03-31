@@ -5,6 +5,9 @@ import {execSync} from "node:child_process";
 import {Buffer} from "node:buffer";
 
 class ImageConverter {
+    get outPath(): string {
+        return this._outPath;
+    }
     get type(): string {
         return this._type;
     }
@@ -13,6 +16,8 @@ class ImageConverter {
     private readonly _type: string;
     private readonly _width: number;
     private readonly _height: number;
+
+    private readonly _outPath: string = 'dist/image';
 
     public constructor(buffer: Buffer, type: string) {
         this._type = type.toLowerCase();
@@ -41,17 +46,21 @@ class ImageConverter {
             pixelBuffer[i * 3 + 2] = value;
         }
 
+        if (!fs.existsSync(this._outPath)) {
+            fs.mkdirSync(this._outPath, { recursive: true });
+        }
+
         switch (this._type) {
             case 'jpeg':
                 await sharp(pixelBuffer, {raw: {width: this._width, height: this._height, channels: 3}})
                     .toFormat('jpeg')
-                    .toFile('dist/out.jpeg');
+                    .toFile(`${this._outPath}/out.jpeg`);
                 break;
             case 'jp2':
             case 'jph':
-                const ppmFile = 'dist/tmp.ppm';
+                const ppmFile = `${this._outPath}/tmp.ppm`;
                 this.toPPM(ppmFile, pixelBuffer);
-                const cmd = `ojph_compress -i ${ppmFile} -o dist/out.${this._type}`;
+                const cmd = `ojph_compress -i ${ppmFile} -o ${this._outPath}/out.${this._type}`;
                 execSync(cmd);
                 break;
             default:
@@ -60,9 +69,9 @@ class ImageConverter {
         return;
     }
 
-    private toPPM(ppmpath: string, buffer: Buffer): void {
+    private toPPM(ppmPath: string, buffer: Buffer): void {
         const header = `P6\n${this._width} ${this._height}\n255\n`;
-        fs.writeFileSync(ppmpath, Buffer.concat([Buffer.from(header), buffer]));
+        fs.writeFileSync(ppmPath, Buffer.concat([Buffer.from(header), buffer]));
     }
 }
 
