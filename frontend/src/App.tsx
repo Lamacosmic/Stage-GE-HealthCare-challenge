@@ -7,6 +7,7 @@ function App() {
     const [isDragging, setIsDragging] = useState(false);
     const [type, setType] = useState<string | null>(null);
     const [convertedFileUrl, setConvertedFileUrl] = useState<string | null>(null);
+    const [extension, setExtension] = useState<string | null>(null);
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -29,8 +30,6 @@ function App() {
             return;
         }
 
-        console.log(type);
-
         const formData = new FormData();
         formData.append("image", file);
 
@@ -43,6 +42,7 @@ function App() {
             const blob = await response.blob();
             const fileUrl = URL.createObjectURL(blob);
             setConvertedFileUrl(fileUrl);
+            setExtension(type);
         } catch (error) {
             console.error("Upload Error:", error);
             alert("Upload Error.");
@@ -93,10 +93,16 @@ function App() {
                 <div style={{marginTop: '5%'}}>
                     <a
                         href={convertedFileUrl}
-                       download
+                       download={`convert-file.${extension}`}
                     >
                         Download converted file
                     </a>
+                </div>
+            )}
+
+            {convertedFileUrl && type==='JPEG' && (
+                <div style={{marginTop: '5%'}}>
+                    <img src={convertedFileUrl} alt="Image convertie" className="w-96 h-auto" />
                 </div>
             )}
 
