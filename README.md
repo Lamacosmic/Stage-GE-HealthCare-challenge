@@ -26,7 +26,9 @@ npm run preview
 
 ### Docker :
 
-WIP
+```
+docker-compose up --build
+```
 
 # Source :
 
