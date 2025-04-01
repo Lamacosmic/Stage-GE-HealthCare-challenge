@@ -2,7 +2,6 @@
 node_modules/
 dist/
 build/
-.env
 .env.local
 .env.*.local
 package-lock.json
@@ -32,7 +31,6 @@ Thumbs.db
 # Frontend (Vite / React)
 frontend/node_modules/
 frontend/dist/
-frontend/.env
 frontend/.env.local
 frontend/.env.*.local
 frontend/package-lock.json

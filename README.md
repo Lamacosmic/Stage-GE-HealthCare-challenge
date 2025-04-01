@@ -1,5 +1,34 @@
 # Stage-GE-HealthCare-challenge
-Petit exercice en rapport avec la compression d’images et l’affichage des formats Jpeg 2000 et Jpeg2000 HT dans le navigateur
+Exercise on image compression and the display of Jpeg 2000 and Jpeg2000 HT formats in the browser
+
+# Run :
+
+### Manual :
+
+##### Dependency :
+- Install OpenJPH : https://github.com/aous72/OpenJPH
+
+##### Backend :
+```
+cd backend
+npm install
+npm run build
+npm run start
+```
+
+##### Frontend :
+```
+cd frontend
+npm install
+npm run build
+npm run preview
+```
+
+### Docker :
+
+```
+docker-compose up --build
+```
 
 # Source :
 
